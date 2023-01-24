@@ -1,5 +1,6 @@
 import java.lang.Math;
 import edu.duke.StorageResource;
+import edu.duke.FileResource;
 public class Part1 {
     public int findStopCodon(String dna, int startIndex, String stopCodon){
         // initialize index
@@ -84,8 +85,44 @@ public class Part1 {
         }
         return (float) cAndGs / dnaLength;
     }
-    public void processGenes(StorageResource dna){
-        
+    public int countCTG(String dna){
+        int totalCTG = 0;
+        int index = 0;
+        while(index<dna.length()-3){
+            String codon = dna.substring(index,index+3);
+            
+            // whe comparing String in java use .equals()
+            if(codon.equals("CTG")){
+                totalCTG = totalCTG + 1;
+            }
+            index = index + 3;
+        }
+        return totalCTG;
+    }
+    public void processGenes(StorageResource sr){
+        // print all string longer than 9 characters and the total count longer than 9
+        int longerThan60 = 0;
+        int cgRatioHigher = 0;
+        int longestGene = 0;
+        for(String s: sr.data()){
+            // evluates longer than 9 chars
+            if(s.length()>60){
+                System.out.println(s);
+                longerThan60 += 1;
+            }
+            // evaluates CG ratio > 0.35
+            if(cgRatio(s) > 0.35){
+                System.out.println(s);
+                cgRatioHigher += 1;
+            }
+            // longest gene
+            if(s.length()>longestGene){
+                longestGene = s.length();
+            }
+        }
+        System.out.println("Strings longer than 60 chars = " + longerThan60);
+        System.out.println("Strings CG ratio greater than 0.35 = " + cgRatioHigher);
+        System.out.println("Length of longest gene = " + longestGene);
     }
     // testing methods
     public void testFindStopCodon (String a, int b, String c){
@@ -101,6 +138,41 @@ public class Part1 {
     }
     public void testCGRatio(String dna){
         System.out.println(cgRatio(dna));
+    }
+    public void testCountCTG(String dna){
+        System.out.println(countCTG(dna));
+    }
+    public void testProcessGenes(){
+        StorageResource dna1 = new StorageResource();
+        dna1 = getAllGenes("ATGCACACAGACAGATAAATGTCATAA");
+        
+        StorageResource dna2 = new StorageResource();
+        dna2 = getAllGenes("ATGTGA");
+        
+        StorageResource dna3 = new StorageResource();
+        dna3 = getAllGenes("ATGCACACACACACATAAATGTCATCATGA");
+        
+        StorageResource dna4 = new StorageResource();
+        dna4 = getAllGenes("ATGTAA");
+        
+        System.out.println("========");
+        processGenes(dna1);
+        System.out.println("========");
+        processGenes(dna2);
+        System.out.println("========");
+        processGenes(dna3);
+        System.out.println("========");
+        processGenes(dna4);
+        System.out.println("========");
+        // uses the file braca1line.fa to get sa DNA and converts it to a string to then use it as 
+        // a StorageResource class
+        FileResource fr = new FileResource("brca1line.fa");
+        String dnaFile = fr.asString();
+        System.out.println(dnaFile);
+        StorageResource dna = new StorageResource();
+        dna = getAllGenes(dnaFile.toUpperCase());
+        System.out.println("Total genes = " + dna.size());
+        processGenes(dna);
     }
     public static void main(String[] args){
         Part1 pr = new Part1();
@@ -120,13 +192,21 @@ public class Part1 {
         // pr.testFindGene("XXXXXXXXXXXXXXXXXXATGXASXASTAAXATGXASXASXASTGAXAATGXASXASXASTAGXATG");
         // System.out.println("---------------------");
         // pr.printAllGenes("XXXXXXXXXXXXXXXXXXATGXASXASTAAXATGXASXASXASTGAXAATGXASXASXASTAGXATG");
-        pr.printAllGenes("CATTGAACDCTGATGCATGCACCACTGACATGCACCACTAAACATGCACACTGACATGCACCACTAGA");
-        System.out.println("---------------------");
-        pr.testGetAllGenes("CATTGAACDCTGATGCATGCACCACTGACATGCACCACTAAACATGCACACTGACATGCACCACTAGA");
-        pr.testGetAllGenes("ATGGTAATGTG");
-        System.out.println("---------------------");
-        pr.testCGRatio("ATGCCATAG");
-        pr.testCGRatio("ATAATA");
+        //pr.printAllGenes("CATTGAACDCTGATGCATGCACCACTGACATGCACCACTAAACATGCACACTGACATGCACCACTAGA");
+        //System.out.println("---------------------");
+        //pr.testGetAllGenes("CATTGAACDCTGATGCATGCACCACTGACATGCACCACTAAACATGCACACTGACATGCACCACTAGA");
+        //pr.testGetAllGenes("ATGGTAATGTG");
+        //pr.testGetAllGenes("ATGTAA");
+        //System.out.println("mire arriba---------------------");
+        //pr.testCGRatio("ATGCCATAG");
+        //pr.testCGRatio("ATAATA");
+        //System.out.println("---------------------");
+        //pr.testCountCTG("CTGATGTAACTGA"); //2
+        //pr.testCountCTG("CTGCTGTAACTGA"); //3
+        //pr.testCountCTG("CTCTTAATGA"); //0
+        //System.out.println("---------------------");
+        pr.testProcessGenes();
+        
     }
     
 }

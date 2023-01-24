@@ -173,6 +173,10 @@ public class Part1 {
         dna = getAllGenes(dnaFile.toUpperCase());
         System.out.println("Total genes = " + dna.size());
         processGenes(dna);
+        // StorageResource dnaString = new StorageResource();
+        // dnaString = getAllGenes(here should be the url using URLResource for the test);
+        // processGenes(dnaString);
+        // System.out.println("Total genes = " + dnaString.size());
     }
     public static void main(String[] args){
         Part1 pr = new Part1();

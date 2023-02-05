@@ -1,5 +1,5 @@
 /**
- * Reads a chosen CSV file of country exports and prints each country that exports coffee.
+ * Reads a chosen CSV file of country exports and prints each country that exports the data specified.
  */
 import edu.duke.*;
 import org.apache.commons.csv.*;
@@ -13,10 +13,10 @@ public class WhichCountriesExport {
         System.out.println(countryData);
         System.out.println("------3--------");
         parser = fr.getCSVParser();
-        listExportersTwoProducts(parser, "fish","nuts");
+        listExportersTwoProducts(parser, "cotton","flowers");
         System.out.println("------4--------");
         parser = fr.getCSVParser();
-        System.out.println("Countries that export = " + numberOfExporters(parser,"gold"));        
+        System.out.println("Countries that export = " + numberOfExporters(parser,"cocoa"));        
         System.out.println("------5--------");
         parser = fr.getCSVParser();        
         bigExporters(parser, "$999,999,999,999");

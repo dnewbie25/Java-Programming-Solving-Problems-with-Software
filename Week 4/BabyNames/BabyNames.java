@@ -3,6 +3,7 @@
  * This program returns information about the most popular baby names from 1880 to 2014 from the CSV files
  */
 import edu.duke.*;
+import java.io.File;
 import org.apache.commons.csv.*;
 
 public class BabyNames {
@@ -59,6 +60,39 @@ public class BabyNames {
         }
         return "NO NAME";
     }
+    public String whatIsNameInYear(String name, int year, int newYear, String gender){
+        // return the popular name in newYear that was in the same ranking position as the initial year
+        int birthNameRank = getRank(year, name, gender);
+        String pronoun = "she";
+        if(gender.equals("M")){
+            pronoun = "he";
+        }
+        if(birthNameRank != -1){
+            String newName = getName(newYear, birthNameRank, gender);
+            return name+" born in "+year+" would be "+newName+" if "+pronoun+" was born in "+newYear;
+        }      
+        
+        return "The name "+name+" was not popular in "+year;       
+    }
+    public int yearOfHighestRank (String name, String gender){
+        // from a group of files it chooses the year where the name had the highest rank
+        DirectoryResource dr = new DirectoryResource();
+        int rank = 1000000;
+        int year = 0;
+        for(File f: dr.selectedFiles()){
+            String fileName = f.getName();
+            int fileYear = Integer.parseInt(fileName.substring(3,7));
+            int rankCurrentFile = getRank(fileYear, name, gender);
+            if(rankCurrentFile < rank && rankCurrentFile != -1){
+                rank = rankCurrentFile;
+                year = fileYear;
+            }
+        }
+        if(rank == 1000000){
+            return -1;
+        }
+        return year;
+    }
     
     // testing methods
     public void testTotalBirths(){
@@ -71,11 +105,19 @@ public class BabyNames {
     public void testGetName(){
         System.out.println("The name is "+getName(2014,1,"M"));
     }
+    public void testWhatIsNameInYear(){
+        System.out.println(whatIsNameInYear("Emma", 2014,2013,"F"));
+    }
+    public void testYearOfHighestRank(){
+        System.out.println(yearOfHighestRank("Jacob","M"));
+    }
     
     public static void main(String[] args){
         BabyNames bn = new BabyNames();
-        bn.testTotalBirths();
-        bn.testGetRank();
-        bn.testGetName();
+        //bn.testTotalBirths();
+        //bn.testGetRank();
+        //bn.testGetName();
+        //bn.testWhatIsNameInYear();
+        bn.testYearOfHighestRank();
     }
 }

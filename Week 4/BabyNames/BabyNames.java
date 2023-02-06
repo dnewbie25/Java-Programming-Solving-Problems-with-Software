@@ -29,7 +29,7 @@ public class BabyNames {
     public int getRank(int year, String name, String gender){
         // get the rank for given name in the year and gender specified
         int rank = 0;
-        String nameOfFile = "yob"+year+"short.csv";
+        String nameOfFile = "yob"+year+".csv";
         FileResource fr = new FileResource(nameOfFile);
         for(CSVRecord record: fr.getCSVParser(false)){
             String recordGender = record.get(1);
@@ -46,7 +46,7 @@ public class BabyNames {
     public String getName(int year, int rank, String gender){
         // get the name in the specified rank for a specific year and gender
         int recordRank = 0;
-        String nameOfFile = "yob"+year+"short.csv";
+        String nameOfFile = "yob"+year+".csv";
         FileResource fr = new FileResource(nameOfFile);
         for(CSVRecord record: fr.getCSVParser(false)){
             String recordGender = record.get(1);
@@ -93,6 +93,44 @@ public class BabyNames {
         }
         return year;
     }
+    public double getAverageRank(String name, String gender){
+        // returns the average ranking for a paticular name across multiple files
+        DirectoryResource dr = new DirectoryResource();
+        double sum = 0.0;
+        int counter = 0;
+        for(File f: dr.selectedFiles()){
+            String fileName = f.getName();
+            int fileYear = Integer.parseInt(fileName.substring(3,7));
+            int rankInFile = getRank(fileYear,name,gender);
+            if(rankInFile == -1){
+                return -1.0;
+            }
+            sum += rankInFile;
+            counter += 1;
+        }
+        return sum / counter;
+    }
+    public int getTotalBirthsRankedHigher (int year, String name, String gender){
+        // returns the sum of people that is above the name in the ranking
+        int ranking = getRank(year, name, gender);  
+        int count = 0;
+        int sumOfPeople = 0;
+        if(ranking != -1){
+            String nameOfFile = "yob"+year+".csv";
+            FileResource fr = new FileResource(nameOfFile);
+            for(CSVRecord record: fr.getCSVParser(false)){
+                int totalBirths = Integer.parseInt(record.get(2));
+                if(count < ranking-1 && record.get(1).equals(gender)){
+                    count += 1;
+                    sumOfPeople += totalBirths;
+                }
+            }
+        }
+        if(count != 0){
+            return sumOfPeople;
+        }
+        return -1;
+    }
     
     // testing methods
     public void testTotalBirths(){
@@ -100,24 +138,32 @@ public class BabyNames {
         totalBirths(fr);
     }
     public void testGetRank(){
-        System.out.println("The ranking is "+getRank(2014,"Isabella","F"));
+        System.out.println("The ranking is "+getRank(1960,"Emily","F"));
     }
     public void testGetName(){
-        System.out.println("The name is "+getName(2014,1,"M"));
+        System.out.println("The name is "+getName(1982,450,"M"));
     }
     public void testWhatIsNameInYear(){
-        System.out.println(whatIsNameInYear("Emma", 2014,2013,"F"));
+        System.out.println(whatIsNameInYear("Owen", 1974,2014,"M"));
     }
     public void testYearOfHighestRank(){
-        System.out.println(yearOfHighestRank("Jacob","M"));
+        System.out.println(yearOfHighestRank("Mich","M"));
+    }
+    public void testGetAverageRank(){
+        System.out.println("Average rank is "+getAverageRank("Robert","M"));
+    }
+    public void testGetTotalBirthsRankedHigher(){
+        System.out.println("Total births of rankings above "+getTotalBirthsRankedHigher(1990,"Drew","M"));
     }
     
     public static void main(String[] args){
         BabyNames bn = new BabyNames();
-        //bn.testTotalBirths();
+        bn.testTotalBirths();
         //bn.testGetRank();
         //bn.testGetName();
         //bn.testWhatIsNameInYear();
-        bn.testYearOfHighestRank();
+        //bn.testYearOfHighestRank();
+        //bn.testGetAverageRank();
+        //bn.testGetTotalBirthsRankedHigher();
     }
 }
